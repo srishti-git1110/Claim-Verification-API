@@ -24,7 +24,7 @@ os.environ["OPENAI_API_KEY"] = config.openai_api_key
 os.environ["SERPAPI_API_KEY"] = config.serpapi_api_key
 
 
-def is_claim(input_text) -> list:
+def is_claim(input_text: str) -> list:
     api_endpoint = f"https://idir.uta.edu/claimbuster/api/v2/score/text/sentences/{input_text}"
     request_headers = {"x-api-key": claimbuster_api_key}
     api_response = requests.get(url=api_endpoint, headers=request_headers)

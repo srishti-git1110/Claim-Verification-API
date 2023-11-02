@@ -4,7 +4,7 @@ import pandas as pd
 
 def main():
     parser = argparse.ArgumentParser(description='Test the FastAPI API with a text input and one optional csv file containing columns representing ground truths for claim detection and claim verification respectively.')
-    parser.add_argument('input_text', type=str, help='Textual input to identify and verify the claims in.')
+    parser.add_argument('--input_text', type=str, help='Textual input to identify and verify the claims in.')
     parser.add_argument('--ground-truth-csv', type=str, nargs='?', help='''Path to the optional CSV file containing the ground truth columns for claim detection and claim verification.
                         The claim detection column should be named claim_label and the claim verification should be named is_claim_correct. is_claim needs to have 0s or 1s, and is_correct can have 0s, 1s and 'na'.''')
     
