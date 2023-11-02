@@ -1,7 +1,6 @@
 import pandas as pd
 from typing import Optional
-from fastapi import FastAPI
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 
 from models import (
@@ -23,7 +22,7 @@ def create_dataframe(input_text, labels):
 @app.post("/process_text")
 async def process_text(
     input_text: str,
-    target_df: Optional[pd.DataFrame] = None
+    file: Optional[UploadFile] = File(None)
 ):
     labels = is_claim(input_text=input_text)
     df = create_dataframe(input_text, labels)
@@ -31,12 +30,14 @@ async def process_text(
     df[['is_claim_correct', 'Additional info']] = df.apply(get_claim_verification).apply(pd.Series)
     print(df)
 
-    if target_df is not None:
+
+    if file is not None:
+        target_df = pd.read_csv(file.file)
         print('Evaluating claim detection...')
 
         acc, f1, prec, rec = evaluate_claim_detection(
-            target=target_df['claim_label'].tolist(),
-            predicted=df['claim_label'].tolist()
+            target=target_df['claim_label'].astype(int).tolist(),
+            predicted=df['claim_label'].astype(int).tolist()
             )
         
         print(f'Accuracy={acc}, F1-score={f1}, Precision={prec}, Recall={rec}')
@@ -48,7 +49,7 @@ async def process_text(
         temp['is_claim_correct'] = temp['is_claim_correct'].replace({'yes': 1, 'no': 0})
 
         acc, f1, prec, rec = evaluate_claim_detection(
-            target=target_df[target_df['is_claim_correct']!='na']['is_claim_correct'].tolist(),
+            target=target_df[target_df['is_claim_correct']!='na']['is_claim_correct'].astype(int).tolist(),
             predicted=temp['is_claim_correct'].tolist()
             )
         
