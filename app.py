@@ -2,13 +2,12 @@ import pandas as pd
 from typing import Optional
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
-import logging
 
 from models import (
     is_claim,
     get_claim_verification
 )
-from evaluate import evaluate_claim_detection
+from utils import evaluate_claim_detection
 
 app = FastAPI()
 
