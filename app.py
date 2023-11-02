@@ -33,6 +33,7 @@ async def process_text(
 
     df[['is_claim_correct', 'Additional info']] = df.apply(get_claim_verification, axis=1).apply(pd.Series)
     print(df)
+    df.to_csv('results.csv')
 
 
     if file is not None:

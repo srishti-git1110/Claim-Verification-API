@@ -26,11 +26,12 @@ def main():
 
     if response.status_code == 200:
         print("API response:")
-        result = response.json()
-        if result is not None:
-            print(result)
-        else:
-            print("No result data in the response.")
+        print(response)
+        #result = response.json()
+        #if result is not None:
+        #    print(result)
+        #else:
+        #    print("No result data in the response.")
     else:
         print(f"API request failed with status code {response.status_code}")
 

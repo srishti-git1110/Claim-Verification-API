@@ -61,21 +61,23 @@ def get_claim_verification(row):
     )
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, return_intermediate_steps=True)
 
-    response = agent_executor.invoke(
-        {
-        "input": """You are a claim verification agent. Below I have provided you with a claim that I need you to verify and provide the output as json in following format:-
+    executor_prompt = """You are a claim verification agent. Below I have provided you with a claim that I need you to verify and provide the output as json in following format:-
 {
-   "answer": yes/no
+   "answer": "yes/no",
    "rationale": reason to accept or deny claim
 }
 
-Claim: 'UNO needs to reduce the carbon dioxide emission levels by 5% by the year 2030.'"""
+Claim: """ + row['sentences']
+    response = agent_executor.invoke(
+        {
+        "input": executor_prompt
         }
     )
-
+    print(response['output'])
     response_output = json.loads(response['output'])
+    
 
-    return response_output['answer'], response['rationale']
+    return response_output['answer'], response_output['rationale']
 
 
 
