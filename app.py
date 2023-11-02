@@ -62,7 +62,7 @@ async def process_text(
 
     df['claim_label'] = df['claim_label'].astype(int)
     
-    return df
+    return "API call completed"
 
     
 
