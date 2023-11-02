@@ -45,7 +45,7 @@ This will launch the API locally at http://127.0.0.1:8000.
 You can use the provided test_api.py script to test the API with a textual input. Simply run the script from the command line and provide the text as an argument:
 
 ```
-python test_api.py <input_text>
+python test_api.py --input_text "<input_text>"
 ```
 
 The script will send a POST request to the API and display the results.
@@ -53,7 +53,7 @@ The script will send a POST request to the API and display the results.
 ## API Endpoints
 This API has one main endpoint:
 
-* `POST /process-text`: Upload a text that you want the identify and verify the claims in.
+* `POST /process_text`: Upload a text that you want the identify and verify the claims in.
 
 ## Contributing
 If you'd like to contribute to this project, please follow these steps:
