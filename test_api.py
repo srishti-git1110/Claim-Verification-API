@@ -18,11 +18,11 @@ def main():
     data = {
         "input_text": input_text
     }
-
+    print(data)
     if ground_truth_csv is not None:
         data['file'] = ground_truth_csv
 
-    response = requests.post(url, files=data)
+    response = requests.post(url, data=data)
 
     if response.status_code == 200:
         print("API response:")

@@ -25,11 +25,12 @@ os.environ["SERPAPI_API_KEY"] = config.serpapi_api_key
 
 
 def is_claim(input_text: str) -> list:
-    api_endpoint = f"https://idir.uta.edu/claimbuster/api/v2/score/text/sentences/{input_text}"
+    sentences = input_text.split('.')
     request_headers = {"x-api-key": claimbuster_api_key}
-    api_response = requests.get(url=api_endpoint, headers=request_headers)
 
-    labels = [1 if result["score"] > 0.5 else 0 for result in api_response.json()["results"]]
+    scores = [requests.get(url=f"https://idir.uta.edu/claimbuster/api/v2/score/text/sentences/{sentence}", headers=request_headers).json()['results'][0]['score'] 
+              for sentence in sentences]
+    labels = [1 if score > 0.5 else 0 for score in scores]
 
     return labels
 
