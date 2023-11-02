@@ -6,12 +6,9 @@ from sklearn.metrics import (
 )
 
 def evaluate_claim_detection(
-        target_df,
-        df
+        target,
+        predicted,
 ):
-    target = target_df['labels']
-    predicted = df['labels']
-
     acc = accuracy_score(target, predicted)
     f1 = f1_score(target, predicted)
     prec = precision_score(target, predicted)

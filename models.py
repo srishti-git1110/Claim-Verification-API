@@ -34,7 +34,10 @@ def is_claim(input_text) -> list:
     return labels
 
 
-def get_claim_verification(input_claim):
+def get_claim_verification(row):
+    if row['claim_label'] == 0:
+        return 'na', 'na'
+    
     llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
     tools = load_tools(["serpapi", "llm-math"], llm=llm)
 

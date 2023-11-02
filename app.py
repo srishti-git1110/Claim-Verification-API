@@ -15,7 +15,7 @@ app = FastAPI()
 def create_dataframe(input_text, labels):
     sentences = input_text.split('.')
     df = pd.DataFrame({'sentences': sentences,
-                       'labels': labels})
+                       'claim_label': labels})
     
     return df
 
@@ -28,31 +28,33 @@ async def process_text(
     labels = is_claim(input_text=input_text)
     df = create_dataframe(input_text, labels)
 
+    df[['is_claim_correct', 'Additional info']] = df.apply(get_claim_verification).apply(pd.Series)
+    print(df)
+
     if target_df is not None:
+        print('Evaluating claim detection...')
+
         acc, f1, prec, rec = evaluate_claim_detection(
-            target_df,
-            df
-        )
-        print(f'Accuracy of claim detection model = {acc}')
-        print(f'F1 score of claim detection model = {f1}')
-        print(f'Precision of claim detection model = {prec}')
-        print(f'Recall of claim detection model = {rec}')
+            target=target_df['claim_label'].tolist(),
+            predicted=df['claim_label'].tolist()
+            )
+        
+        print(f'Accuracy={acc}, F1-score={f1}, Precision={prec}, Recall={rec}')
 
-    else:
-        print('''Cannot evaluate the claim detection process. 
-              Please provide a target dataframe having atleast one column called labels;
-              labels contains the ground truth of whether the sentences in the input text are claims or not.''')
 
-    claim_df = df[df['labels'] == 1]
-    claim_df.drop(columns=['labels'], inplace=True)
-    claim_df.reset_index(drop=True)
-    claim_df.rename(columns={'sentences': 'claims'},
-                    inplace=True
-                    )
+        print()
+        print('Evaluating claim verification...')
+        temp = df[df['is_claim_correct']!='na']
+        temp['is_claim_correct'] = temp['is_claim_correct'].replace({'yes': 1, 'no': 0})
 
-    claim_df[['is_claim_correct', 'Additional info']] = claim_df['claims'].apply(get_claim_verification).apply(pd.Series)
-    print(claim_df)
-    return claim_df
+        acc, f1, prec, rec = evaluate_claim_detection(
+            target=target_df[target_df['is_claim_correct']!='na']['is_claim_correct'].tolist(),
+            predicted=temp['is_claim_correct'].tolist()
+            )
+        
+        print(f'Accuracy={acc}, F1-score={f1}, Precision={prec}, Recall={rec}')
+    
+    return df
 
     
 
