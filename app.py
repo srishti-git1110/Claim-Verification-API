@@ -59,6 +59,8 @@ async def process_text(
             )
         
         print(f'Accuracy={acc}, F1-score={f1}, Precision={prec}, Recall={rec}')
+
+    df['claim_label'] = df['claim_label'].astype(int)
     
     return df
 
