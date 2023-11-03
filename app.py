@@ -1,4 +1,6 @@
+import nltk
 import pandas as pd
+from nltk.tokenize import sent_tokenize
 from typing import Optional
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
@@ -12,8 +14,9 @@ from utils import evaluate_claim_detection
 app = FastAPI()
 
 def create_dataframe(input_text, labels):
+    nltk.download('punkt')
     print(len(labels))
-    sentences = input_text.split('.')[:-1]
+    sentences = sent_tokenize(input_text)
     print(len(sentences))
     df = pd.DataFrame({'sentences': sentences,
                        'claim_label': labels})

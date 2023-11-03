@@ -4,6 +4,7 @@ uvicorn==0.23.2
 scikit-learn==1.2.2
 numexpr==2.8.7
 requests==2.31.0
+nltk==3.8.1
 langchainhub
 google-search-results
 pandas
