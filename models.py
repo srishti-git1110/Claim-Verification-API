@@ -2,6 +2,7 @@ from config import config
 
 import os
 import json
+import nltk
 import openai
 import requests
 from langchain.agents import (
@@ -9,6 +10,7 @@ from langchain.agents import (
     initialize_agent,
     AgentType
 )
+from nltk.tokenize import sent_tokenize
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.tools.render import render_text_description
@@ -25,17 +27,19 @@ os.environ["SERPAPI_API_KEY"] = config.serpapi_api_key
 
 
 def is_claim(input_text: str) -> list:
+    nltk.download('punkt')
+    sentences = sent_tokenize(input_text)
     request_headers = {"x-api-key": claimbuster_api_key}
-    response = requests.get(url=f"https://idir.uta.edu/claimbuster/api/v2/score/text/sentences/{input_text}", headers=request_headers).json()
-    
-    labels = [1 if result["score"]>0.52 else 0 for result in response["results"]]
+
+    scores = [requests.get(url=f"https://idir.uta.edu/claimbuster/api/v2/score/text/{sentence}", headers=request_headers).json()["results"][0]["score"] for sentence in sentences]
+    labels = [1 if score>0.52 else 0 for score in scores]
 
     return labels
 
 
 def get_claim_verification(row):
     if row['claim_label'] == 0:
-        return 'na', 'na'
+        return 'na'
     
     llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
     tools = load_tools(["serpapi", "llm-math"], llm=llm)
@@ -59,12 +63,7 @@ def get_claim_verification(row):
     )
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, return_intermediate_steps=True)
 
-    executor_prompt = """You are a claim verification agent. Below I have provided you with a sentence that has one or more than more claim. Your job is to carefully analyze whatever claims are made in the sentence and verify them for correctness and provide the output as json in following format:-
-{
-   "answer": "yes/no",
-   "rationale": reason to accept or deny claim
-}
-
+    executor_prompt = """You are a claim verification agent. Below I have provided you with a sentence that has one or more than more claim. Your job is to carefully analyze whatever claims are made in the sentence and verify them for correctness and provide the output along with the reason to accept or deny claim.
 Claim: """ + row['sentences']
     
     response = agent_executor.invoke(
@@ -74,9 +73,8 @@ Claim: """ + row['sentences']
     )
 
     print(response['output'])
-    response_output = json.loads(response['output'])
     
-    return response_output['answer'], response_output['rationale']
+    return response['output']
 
 
 

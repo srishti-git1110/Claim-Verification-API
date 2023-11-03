@@ -32,7 +32,7 @@ async def process_text(
     labels = is_claim(input_text=input_text)
     df = create_dataframe(input_text, labels)
 
-    df[['is_claim_correct', 'Additional info']] = df.apply(get_claim_verification, axis=1).apply(pd.Series)
+    df['is_claim_correct'] = df.apply(get_claim_verification, axis=1)
     print(df)
     df.to_csv('results.csv')
 
