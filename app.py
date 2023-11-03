@@ -13,7 +13,7 @@ app = FastAPI()
 
 def create_dataframe(input_text, labels):
     print(len(labels))
-    sentences = input_text.split('.')
+    sentences = input_text.split('.')[:-1]
     print(len(sentences))
     df = pd.DataFrame({'sentences': sentences,
                        'claim_label': labels})
@@ -27,7 +27,6 @@ async def process_text(
     file: Optional[UploadFile] = File(None)
 ):
     labels = is_claim(input_text=input_text)
-    #logging.debug(f"Labels: {labels}")
     df = create_dataframe(input_text, labels)
 
     df[['is_claim_correct', 'Additional info']] = df.apply(get_claim_verification, axis=1).apply(pd.Series)

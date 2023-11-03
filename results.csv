@@ -1,3 +1,3 @@
 ,sentences,claim_label,is_claim_correct,Additional info
-0,"""uno aims to reduce carbon emission by 45% by year 2030",1,yes,The UNO aims to reduce carbon emissions by 45% by the year 2030 according to their goals.
-1," uno aims to make net zero carbon emissions by year 2050""",1,yes,UNO aims to achieve net zero carbon emissions by 2050 as called for in the Paris Agreement.
+0,The united nations aims to reduce net carbon emissions by 27% by the year 2030,1,no,"The claim is incorrect. The United Nations aims to reduce net carbon emissions by 45% by the year 2030, not 27%."
+1, The UNO also wants the global carbon emissions to reach net 0 by year 2050,1,yes,"The claim is supported by the Paris Agreement, which calls for a reduction of emissions by 45% by 2030 and reaching net zero by 2050."
